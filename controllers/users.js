@@ -18,7 +18,7 @@ const getUserById = (req, res) => {
   User.findById(userId)
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         return res
           .status(NOT_FOUND)
           .send({ message: 'Пользователь по указанному _id не найден.' });
