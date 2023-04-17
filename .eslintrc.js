@@ -8,10 +8,11 @@ module.exports = {
   overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
+    sourceType: 'module',
   },
   rules: {
     'no-underscore-dangle': ['error', { allow: ['_id'] }],
-    'comma-dangle': ['error', 'always-multiline'],
-    'no-unused-vars': off,
+    'comma-dangle': 'off',
+    'no-unused-vars': 'off',
   },
 };

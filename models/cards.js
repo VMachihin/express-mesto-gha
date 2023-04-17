@@ -13,12 +13,13 @@ const cardsSchema = new mongoose.Schema({
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
+    ref: 'user', // чтобы получить доступ к данным пользователей, связанных с этими идентификаторами, необходимо добавить параметр ref: 'user' в поле схемы
     required: true,
   },
   likes: [
     {
       type: mongoose.Schema.Types.ObjectId,
+      ref: 'user', // чтобы получить доступ к данным пользователей, связанных с этими идентификаторами, необходимо добавить параметр ref: 'user' в поле схемы
       default: [],
     },
   ],

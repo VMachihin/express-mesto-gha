@@ -1,5 +1,6 @@
 const Card = require('../models/cards');
 const {
+  CREATED,
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
@@ -12,6 +13,11 @@ const createCard = (req, res) => {
   Card.create({ name, link, owner: _id })
     .then((newCard) => {
       res.send(newCard);
+    })
+    .then(() => {
+      res.status(CREATED).send({
+        message: 'Карточка успешно добавлена',
+      });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -40,6 +46,11 @@ const deleteCard = (req, res) => {
 
   Card.findByIdAndRemove(cardId)
     .then((card) => {
+      if (!card) {
+        const error = new Error('Карточка с id отсутствует в базе');
+        error.statusCode = NOT_FOUND;
+        throw error;
+      }
       res.send(card);
     })
     .catch((err) => {
@@ -47,6 +58,11 @@ const deleteCard = (req, res) => {
         return res.status(NOT_FOUND).send({
           message: 'Карточка с указанным _id не найдена.',
         });
+      }
+      if (err.statusCode === NOT_FOUND) {
+        return res
+          .status(NOT_FOUND)
+          .send({ message: 'Карточка с указанным id не найдена.' });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
@@ -62,13 +78,23 @@ const likeCard = (req, res) => {
     { new: true }
   )
     .then((card) => {
+      if (!card) {
+        const error = new Error('Карточка с id отсутствует в базе');
+        error.statusCode = NOT_FOUND;
+        throw error;
+      }
       res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         return res.status(BAD_REQUEST).send({
           message: 'Переданы некорректные данные для постановки лайка.',
         });
+      }
+      if (err.statusCode === NOT_FOUND) {
+        return res
+          .status(NOT_FOUND)
+          .send({ message: 'Карточка с указанным id не найдена.' });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
@@ -84,13 +110,23 @@ const dislikeCard = (req, res) => {
     { new: true }
   )
     .then((card) => {
+      if (!card) {
+        const error = new Error('Карточка с id отсутствует в базе');
+        error.statusCode = NOT_FOUND;
+        throw error;
+      }
       res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         return res.status(BAD_REQUEST).send({
           message: 'Переданы некорректные данные для снятия лайка.',
         });
+      }
+      if (err.statusCode === NOT_FOUND) {
+        return res
+          .status(NOT_FOUND)
+          .send({ message: 'Карточка с указанным id не найдена.' });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
