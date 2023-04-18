@@ -12,10 +12,7 @@ const createCard = (req, res) => {
 
   Card.create({ name, link, owner: _id })
     .then((newCard) => {
-      res.send(newCard);
-    })
-    .then(() => {
-      res.status(CREATED).send({
+      res.status(CREATED).send(newCard, {
         message: 'Карточка успешно добавлена',
       });
     })

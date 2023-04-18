@@ -49,10 +49,7 @@ const createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((newUser) => {
-      res.send(newUser);
-    })
-    .then(() => {
-      res.status(CREATED).send({
+      res.status(CREATED).send(newUser, {
         message: 'Пользователь успешно создан',
       });
     })
