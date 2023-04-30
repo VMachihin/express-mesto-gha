@@ -14,5 +14,10 @@ module.exports = {
     'no-underscore-dangle': ['error', { allow: ['_id'] }],
     'comma-dangle': 'off',
     'no-unused-vars': 'off',
+    'object-curly-newline': 'off',
+    'import/no-extraneous-dependencies': 'off',
+    'implicit-arrow-linebreak': 'off',
+    'no-console': 'off',
+    'consistent-return': 'off',
   },
 };
