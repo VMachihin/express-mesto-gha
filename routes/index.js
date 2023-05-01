@@ -5,6 +5,7 @@ const usersRouter = require('./users');
 const cardsRouter = require('./cards');
 const auth = require('../middlewares/auth');
 const { createUser, login } = require('../controllers/users');
+const { urlValidate } = require('../utils/variables');
 
 router.post(
   '/signup',
@@ -12,9 +13,12 @@ router.post(
     body: Joi.object().keys({
       email: Joi.string().required().email(),
       password: Joi.string().required().min(5),
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string().regex(urlValidate),
     }),
   }),
-  createUser
+  createUser,
 );
 router.post(
   '/signin',
@@ -22,12 +26,9 @@ router.post(
     body: Joi.object().keys({
       email: Joi.string().required().email(),
       password: Joi.string().required().min(5),
-      name: Joi.string().min(2).max(30),
-      about: Joi.string().min(2).max(30),
-      avatar: Joi.string(),
     }),
   }),
-  login
+  login,
 );
 
 router.use('/users', auth, usersRouter);

@@ -7,6 +7,7 @@ const {
   editAvatar,
   getUserInfo,
 } = require('../controllers/users');
+const { urlValidate } = require('../utils/variables');
 
 usersRouter.get('/', getAllUsers);
 usersRouter.get('/me', getUserInfo);
@@ -14,29 +15,29 @@ usersRouter.get(
   '/:userId',
   celebrate({
     params: Joi.object({
-      userId: Joi.string().required(),
+      userId: Joi.string().hex().required(),
     }),
   }),
-  getUserById
+  getUserById,
 );
 usersRouter.patch(
   '/me',
   celebrate({
     body: Joi.object({
-      name: Joi.string().min(2).max(30),
-      about: Joi.string().min(2).max(30),
+      name: Joi.string().min(2).max(30).required(),
+      about: Joi.string().min(2).max(30).required(),
     }),
   }),
-  editProfile
+  editProfile,
 );
 usersRouter.patch(
   '/me/avatar',
   celebrate({
     body: Joi.object({
-      avatar: Joi.string().regex(/^(http|https):\/\/[^ "]+$/),
+      avatar: Joi.string().regex(urlValidate).required(),
     }),
   }),
-  editAvatar
+  editAvatar,
 );
 
 module.exports = usersRouter;

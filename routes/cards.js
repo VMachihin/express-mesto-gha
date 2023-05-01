@@ -7,6 +7,7 @@ const {
   likeCard,
   dislikeCard,
 } = require('../controllers/cards');
+const { urlValidate } = require('../utils/variables');
 
 cardsRouter.get('/', getCards);
 cardsRouter.post(
@@ -16,37 +17,37 @@ cardsRouter.post(
       name: Joi.string().min(2).max(30).required(),
       link: Joi.string()
         .required()
-        .regex(/^(http|https):\/\/[^ "]+$/),
+        .regex(urlValidate),
     }),
   }),
-  createCard
+  createCard,
 );
 cardsRouter.delete(
   '/:cardId',
   celebrate({
     params: Joi.object({
-      cardId: Joi.string(),
+      cardId: Joi.string().hex(),
     }),
   }),
-  deleteCard
+  deleteCard,
 );
 cardsRouter.put(
   '/:cardId/likes',
   celebrate({
     params: Joi.object({
-      cardId: Joi.string(),
+      cardId: Joi.string().hex(),
     }),
   }),
-  likeCard
+  likeCard,
 );
 cardsRouter.delete(
   '/:cardId/likes',
   celebrate({
     params: Joi.object({
-      cardId: Joi.string(),
+      cardId: Joi.string().hex(),
     }),
   }),
-  dislikeCard
+  dislikeCard,
 );
 
 module.exports = cardsRouter;

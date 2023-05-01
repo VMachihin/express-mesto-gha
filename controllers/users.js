@@ -1,4 +1,3 @@
-const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -30,13 +29,13 @@ const getUserInfo = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  console.log(req.params);
   const { userId } = req.params;
 
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        next(new NotFoundErr('Пользователь с указанным id не найден.'));
+        throw next(new NotFoundErr('Пользователь с указанным id не найден.'));
+        // Даниил, добрый день, подскажите, почему только тут надо прерывать выполнение функции?
       }
 
       res.send(user);
@@ -49,19 +48,18 @@ const getUserById = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
-  if (!validator.isEmail(email)) {
-    next(
-      new BadRequestErr(
-        'Переданы некорректные данные при создании пользователя'
-      )
-    );
-  }
   bcrypt.hash(password, 10).then((hash) => {
-    User.create({ name, about, avatar, email, password: hash })
+    User.create({
+      name, about, avatar, email, password: hash,
+    })
       .then((newUser) => {
-        res.status(CREATED).send(newUser);
+        const newUserNoPassword = newUser.toObject();
+        delete newUserNoPassword.password;
+        res.status(CREATED).send(newUserNoPassword);
       })
       .catch((err) => {
         if (err.code === 11000) {
@@ -70,8 +68,8 @@ const createUser = (req, res, next) => {
         if (err.name === 'ValidationError') {
           next(
             new BadRequestErr(
-              'Переданы некорректные данные при создании пользователя'
-            )
+              'Переданы некорректные данные при создании пользователя',
+            ),
           );
         }
       });
@@ -84,20 +82,16 @@ const editProfile = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((newData) => {
       if (!req.user._id) {
-        next(new NotFoundErr('Пользователь с указанным id не найден.'));
+        throw next(new NotFoundErr('Пользователь с указанным id не найден.'));
       }
 
       res.send(newData);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestErr('Введены не корректные данные'));
-      }
-    });
+    .catch(next);
 };
 
 const editAvatar = (req, res, next) => {
@@ -106,20 +100,16 @@ const editAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((userData) => {
       if (!req.user._id) {
-        next(new NotFoundErr('Пользователь с указанным id не найден.'));
+        throw next(new NotFoundErr('Пользователь с указанным id не найден.'));
       }
 
       res.send(userData);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestErr('Введены не корректные данные'));
-      }
-    });
+    .catch(next);
 };
 
 const login = (req, res, next) => {
@@ -129,7 +119,7 @@ const login = (req, res, next) => {
     .select('+password') // команда добавляет в объект user хэш пароля
     .then((user) => {
       if (!user) {
-        next(new UnauthorizedErr('Не правильная почта или пароль!'));
+        throw next(new UnauthorizedErr('Не правильная почта или пароль!'));
       }
 
       return bcrypt.compare(password, user.password).then((matched) => {
@@ -141,8 +131,7 @@ const login = (req, res, next) => {
           expiresIn: '10d',
         });
         res
-          .send({ token, message: 'Вход выполнен!' })
-          .localStorage.setItem('token', token);
+          .send({ token, message: 'Вход выполнен!' });
       });
     })
     .catch(next);
