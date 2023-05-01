@@ -17,7 +17,7 @@ app.use(router);
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
+app.use((err, res) => {
   const { statusCode = 500, message } = err;
   res
     .status(statusCode)
