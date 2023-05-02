@@ -20,11 +20,13 @@ const createCard = (req, res, next) => {
           ),
         );
       }
+      next();
     });
 };
 
 const getCards = (req, res, next) => {
   Card.find({})
+    .populate(['owner', 'likes'])
     .then((cards) => {
       res.send(cards);
     })
@@ -46,6 +48,7 @@ const deleteCard = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new BadRequestErr('Введены не корректные данные.'));
       }
+      next();
     });
 };
 
@@ -56,6 +59,7 @@ const likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
         next(new NotFoundErr('Карточка с указанным id не найдена.'));
@@ -71,6 +75,7 @@ const likeCard = (req, res, next) => {
           ),
         );
       }
+      next();
     });
 };
 
@@ -81,6 +86,7 @@ const dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
         next(new NotFoundErr('Карточка с указанным id не найдена.'));
@@ -94,6 +100,7 @@ const dislikeCard = (req, res, next) => {
           new BadRequestErr('Переданы некорректные данные для снятия лайка.'),
         );
       }
+      next();
     });
 };
 

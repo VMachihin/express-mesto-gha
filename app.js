@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
+const { routeNotFound, centralizedErrorHandler } = require('./utils/centralized-error-handler');
 
 const router = require('./routes');
 
@@ -17,12 +18,9 @@ app.use(router);
 
 app.use(errors());
 
-app.use((err, res) => {
-  const { statusCode = 500, message } = err;
-  res
-    .status(statusCode)
-    .send({ message: statusCode === 500 ? 'Сервер недоступен' : message });
-});
+app.use(routeNotFound);
+
+app.use(centralizedErrorHandler);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

@@ -44,6 +44,7 @@ const getUserById = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new BadRequestErr('Введены не корректные данные.'));
       }
+      next();
     });
 };
 
@@ -52,7 +53,7 @@ const createUser = (req, res, next) => {
     name, about, avatar, email, password,
   } = req.body;
 
-  bcrypt.hash(password, 10).then((hash) => {
+  return bcrypt.hash(password, 10).then((hash) => {
     User.create({
       name, about, avatar, email, password: hash,
     })
@@ -72,6 +73,7 @@ const createUser = (req, res, next) => {
             ),
           );
         }
+        next();
       });
   });
 };
@@ -124,7 +126,7 @@ const login = (req, res, next) => {
 
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
-          next(new UnauthorizedErr('Не правильная почта или пароль!'));
+          throw next(new UnauthorizedErr('Не правильная почта или пароль!'));
         }
 
         const token = jwt.sign({ _id: user._id }, secretKey, {

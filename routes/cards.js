@@ -7,28 +7,23 @@ const {
   likeCard,
   dislikeCard,
 } = require('../controllers/cards');
-const { urlValidate } = require('../utils/variables');
+
+const {
+  createCardValidation,
+  cardIdValidation,
+} = require('../validation');
 
 cardsRouter.get('/', getCards);
 cardsRouter.post(
   '/',
   celebrate({
-    body: Joi.object({
-      name: Joi.string().min(2).max(30).required(),
-      link: Joi.string()
-        .required()
-        .regex(urlValidate),
-    }),
+    body: Joi.object(createCardValidation),
   }),
   createCard,
 );
 cardsRouter.delete(
   '/:cardId',
-  celebrate({
-    params: Joi.object({
-      cardId: Joi.string().hex(),
-    }),
-  }),
+  celebrate(cardIdValidation),
   deleteCard,
 );
 cardsRouter.put(
@@ -42,11 +37,7 @@ cardsRouter.put(
 );
 cardsRouter.delete(
   '/:cardId/likes',
-  celebrate({
-    params: Joi.object({
-      cardId: Joi.string().hex(),
-    }),
-  }),
+  celebrate(cardIdValidation),
   dislikeCard,
 );
 
