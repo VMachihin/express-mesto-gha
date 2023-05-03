@@ -53,7 +53,7 @@ const deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ForbiddenErr('Введены не корректные данные.'));
+        next(new BadRequestErr('Введены не корректные данные.'));
       }
       next(err);
     });
