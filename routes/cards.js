@@ -16,9 +16,7 @@ const {
 cardsRouter.get('/', getCards);
 cardsRouter.post(
   '/',
-  celebrate({
-    body: Joi.object(createCardValidation),
-  }),
+  celebrate(createCardValidation),
   createCard,
 );
 cardsRouter.delete(
