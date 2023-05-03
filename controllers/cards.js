@@ -11,9 +11,6 @@ const createCard = (req, res, next) => {
       const newCardNoId = newCard.toObject();
       delete newCardNoId._id;
       res.status(CREATED).send(newCardNoId);
-      res
-        .status(CREATED)
-        .send({ newCard, message: 'Карточка успешно добавлена' });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
