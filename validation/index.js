@@ -31,10 +31,12 @@ const editAvatarValidation = {
 };
 
 const createCardValidation = {
-  name: Joi.string().min(2).max(30).required(),
-  link: Joi.string()
-    .required()
-    .regex(urlValidate),
+  body: Joi.object({
+    name: Joi.string().min(2).max(30).required(),
+    link: Joi.string()
+      .required()
+      .regex(urlValidate),
+  }),
 };
 
 const cardIdValidation = {
