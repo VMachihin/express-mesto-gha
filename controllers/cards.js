@@ -10,6 +10,7 @@ const createCard = (req, res, next) => {
     .then((newCard) => {
       const newCardNoId = newCard.toObject();
       delete newCardNoId._id;
+      delete newCardNoId.owner;
       res.status(CREATED).send(newCardNoId);
     })
     .catch((err) => {
