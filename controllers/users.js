@@ -13,7 +13,7 @@ const {
 const getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      res.send(users);
+      res.send({ users });
     })
 
     .catch(next);
@@ -53,7 +53,7 @@ const createUser = (req, res, next) => {
     name, about, avatar, email, password,
   } = req.body;
 
-  return bcrypt.hash(password, 10).then((hash) => {
+  bcrypt.hash(password, 10).then((hash) => {
     User.create({
       name, about, avatar, email, password: hash,
     })

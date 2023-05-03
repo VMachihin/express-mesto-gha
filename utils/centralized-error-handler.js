@@ -4,7 +4,7 @@ const routeNotFound = (req, res) => {
   });
 };
 
-const centralizedErrorHandler = (err, res, next) => {
+const centralizedErrorHandler = (err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res
     .status(statusCode)
