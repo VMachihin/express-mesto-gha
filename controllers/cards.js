@@ -8,6 +8,9 @@ const createCard = (req, res, next) => {
 
   Card.create({ name, link, owner: _id })
     .then((newCard) => {
+      const newCardNoId = newCard.toObject();
+      delete newCardNoId._id;
+      res.status(CREATED).send(newCardNoId);
       res
         .status(CREATED)
         .send({ newCard, message: 'Карточка успешно добавлена' });
