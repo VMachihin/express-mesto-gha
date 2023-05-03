@@ -37,10 +37,11 @@ const getCards = (req, res, next) => {
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
 
-  Card.findByIdAndRemove({ cardId })
+  Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (!card) {
         next(new NotFoundErr('Карточка с id отсутствует в базе'));
+        return;
       }
 
       res.send(card);
