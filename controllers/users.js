@@ -44,7 +44,7 @@ const getUserById = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new BadRequestErr('Введены не корректные данные.'));
       }
-      next();
+      next(err);
     });
 };
 
@@ -73,7 +73,7 @@ const createUser = (req, res, next) => {
             ),
           );
         }
-        next();
+        next(err);
       });
   });
 };
