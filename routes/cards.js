@@ -16,7 +16,9 @@ const {
 cardsRouter.get('/', getCards);
 cardsRouter.post(
   '/',
-  celebrate(createCardValidation),
+  celebrate({
+    body: Joi.object(createCardValidation),
+  }),
   createCard,
 );
 cardsRouter.delete(
@@ -26,11 +28,7 @@ cardsRouter.delete(
 );
 cardsRouter.put(
   '/:cardId/likes',
-  celebrate({
-    params: Joi.object({
-      cardId: Joi.string().hex(),
-    }),
-  }),
+  celebrate(cardIdValidation),
   likeCard,
 );
 cardsRouter.delete(
