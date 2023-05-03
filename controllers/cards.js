@@ -44,6 +44,11 @@ const deleteCard = (req, res, next) => {
         return;
       }
 
+      if (card.owner._id === req.user._id) {
+        next(new ForbiddenErr('Не достаточно прав для удаления карточки!'));
+        return;
+      }
+
       res.send(card);
     })
     .catch((err) => {
