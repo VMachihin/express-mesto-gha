@@ -4,11 +4,13 @@ const routeNotFound = (req, res) => {
   });
 };
 
-const centralizedErrorHandler = (err, res) => {
+const centralizedErrorHandler = (err, res, next) => {
   const { statusCode = 500, message } = err;
   res
     .status(statusCode)
     .send({ message: statusCode === 500 ? 'Сервер недоступен' : message });
+
+  next();
 };
 
 module.exports = { routeNotFound, centralizedErrorHandler };
