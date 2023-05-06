@@ -34,14 +34,14 @@ const createCardValidation = {
   body: Joi.object({
     name: Joi.string().min(2).max(30).required(),
     link: Joi.string()
-      .required()
-      .regex(urlValidate),
+      .regex(urlValidate)
+      .required(),
   }),
 };
 
 const cardIdValidation = {
   params: Joi.object({
-    cardId: Joi.string().hex(),
+    cardId: Joi.string().hex().required(),
   }),
 };
 

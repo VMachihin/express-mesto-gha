@@ -35,7 +35,6 @@ const getUserById = (req, res, next) => {
     .then((user) => {
       if (!user) {
         throw next(new NotFoundErr('Пользователь с указанным id не найден.'));
-        // Даниил, добрый день, подскажите, почему только тут надо прерывать выполнение функции?
       }
 
       res.send(user);
@@ -65,8 +64,7 @@ const createUser = (req, res, next) => {
       .catch((err) => {
         if (err.code === 11000) {
           next(new ConflictErr('Пользователь с такой почтой уже существует.'));
-        }
-        if (err.name === 'ValidationError') {
+        } else if (err.name === 'ValidationError') {
           next(
             new BadRequestErr(
               'Переданы некорректные данные при создании пользователя',

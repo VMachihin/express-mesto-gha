@@ -10,7 +10,7 @@ const createCard = (req, res, next) => {
     .then((newCard) => {
       const newCardNoId = newCard.toObject();
       delete newCardNoId._id;
-      delete newCardNoId.owner;
+
       res.status(CREATED).send(newCardNoId);
     })
     .catch((err) => {
@@ -37,19 +37,22 @@ const getCards = (req, res, next) => {
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
 
-  Card.findByIdAndRemove(cardId)
+  Card.findById(cardId)
     .then((card) => {
       if (!card) {
         next(new NotFoundErr('Карточка с id отсутствует в базе'));
-        return;
-      }
-
-      if (card.owner._id === req.user._id) {
+      } else if (card.owner.toHexString() === req.user._id) {
+        Card.deleteOne({ _id: cardId })
+          .then((deletedCard) => {
+            if (deletedCard.deletedCount === 0) {
+              throw new NotFoundErr('Карточка с id отсутствует в базе');
+            }
+            return res.send({ message: 'Карточка удалена' });
+          })
+          .catch(next);
+      } else {
         next(new ForbiddenErr('Не достаточно прав для удаления карточки!'));
-        return;
       }
-
-      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
