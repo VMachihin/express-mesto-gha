@@ -40,7 +40,7 @@ const deleteCard = (req, res, next) => {
   Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        next(new NotFoundErr('Карточка с id отсутствует в базе'));
+        throw next(new NotFoundErr('Карточка с id отсутствует в базе'));
       } else if (card.owner.toHexString() === req.user._id) {
         Card.deleteOne({ _id: cardId })
           .then((deletedCard) => {
@@ -51,7 +51,7 @@ const deleteCard = (req, res, next) => {
           })
           .catch(next);
       } else {
-        next(new ForbiddenErr('Не достаточно прав для удаления карточки!'));
+        throw next(new ForbiddenErr('Не достаточно прав для удаления карточки!'));
       }
     })
     .catch((err) => {
@@ -72,21 +72,12 @@ const likeCard = (req, res, next) => {
     .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
-        next(new NotFoundErr('Карточка с указанным id не найдена.'));
+        throw next(new NotFoundErr('Карточка с указанным id не найдена.'));
       }
 
       res.send(card);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(
-          new BadRequestErr(
-            'Переданы некорректные данные для постановки лайка.',
-          ),
-        );
-      }
-      next(err);
-    });
+    .catch(next);
 };
 
 const dislikeCard = (req, res, next) => {
@@ -99,19 +90,12 @@ const dislikeCard = (req, res, next) => {
     .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
-        next(new NotFoundErr('Карточка с указанным id не найдена.'));
+        throw next(new NotFoundErr('Карточка с указанным id не найдена.'));
       }
 
       res.send(card);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(
-          new BadRequestErr('Переданы некорректные данные для снятия лайка.'),
-        );
-      }
-      next(err);
-    });
+    .catch(next);
 };
 
 module.exports = {

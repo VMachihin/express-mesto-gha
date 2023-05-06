@@ -59,6 +59,7 @@ const createUser = (req, res, next) => {
       .then((newUser) => {
         const newUserNoPassword = newUser.toObject();
         delete newUserNoPassword.password;
+
         res.status(CREATED).send(newUserNoPassword);
       })
       .catch((err) => {
