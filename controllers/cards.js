@@ -20,8 +20,9 @@ const createCard = (req, res, next) => {
             'Переданы некорректные данные при создании карточки.',
           ),
         );
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -43,12 +44,7 @@ const deleteCard = (req, res, next) => {
         throw next(new NotFoundErr('Карточка с id отсутствует в базе'));
       } else if (card.owner.toHexString() === req.user._id) {
         Card.deleteOne({ _id: cardId })
-          .then((deletedCard) => {
-            if (deletedCard.deletedCount === 0) {
-              throw new NotFoundErr('Карточка с id отсутствует в базе');
-            }
-            return res.send({ message: 'Карточка удалена' });
-          })
+          .then((deletedCard) => res.send({ deletedCard, message: 'Карточка удалена' }))
           .catch(next);
       } else {
         throw next(new ForbiddenErr('Не достаточно прав для удаления карточки!'));
@@ -57,8 +53,9 @@ const deleteCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestErr('Введены не корректные данные.'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
