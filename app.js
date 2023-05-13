@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const { routeNotFound, centralizedErrorHandler } = require('./utils/centralized-error-handler');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const router = require('./routes');
 
@@ -14,7 +15,11 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 app.use(express.json()); // для собирания JSON-формата
 app.use(express.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
 
+app.use(requestLogger);
+
 app.use(router);
+
+app.use(errorLogger);
 
 app.use(errors());
 
